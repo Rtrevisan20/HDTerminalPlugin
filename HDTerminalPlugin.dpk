@@ -1,0 +1,66 @@
+package HDTerminalPlugin;
+
+{$R *.res}
+{$R *.dres}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'HDTerminalPlugin'}
+{$LIBSUFFIX AUTO}
+{$DESIGNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vcl,
+  designide;
+
+contains
+  HDTerminalPlugin.View.Main.Frame in 'src\view\HDTerminalPlugin.View.Main.Frame.pas' {MainFrame: TFrame},
+  SVG in 'src\resources\SVG-Ekot\SVG.pas',
+  SVGColor in 'src\resources\SVG-Ekot\SVGColor.pas',
+  SVGCommon in 'src\resources\SVG-Ekot\SVGCommon.pas',
+  SVGPaint in 'src\resources\SVG-Ekot\SVGPaint.pas',
+  SVGParse in 'src\resources\SVG-Ekot\SVGParse.pas',
+  SVGPath in 'src\resources\SVG-Ekot\SVGPath.pas',
+  SVGProperties in 'src\resources\SVG-Ekot\SVGProperties.pas',
+  SVGStyle in 'src\resources\SVG-Ekot\SVGStyle.pas',
+  SVGTypes in 'src\resources\SVG-Ekot\SVGTypes.pas',
+  GDIPKerning in 'src\resources\SVG-Ekot\gdip\GDIPKerning.pas',
+  GDIPOBJ2 in 'src\resources\SVG-Ekot\gdip\GDIPOBJ2.pas',
+  GDIPPathText in 'src\resources\SVG-Ekot\gdip\GDIPPathText.pas',
+  GDIPUtils in 'src\resources\SVG-Ekot\gdip\GDIPUtils.pas',
+  HDTerminalLabel in 'src\components\HDTerminalLabel.pas',
+  HDTerminalSVGImage in 'src\components\HDTerminalSVGImage.pas',
+  HDTerminalPlugin.Resources.SVG in 'src\resources\HDTerminalPlugin.Resources.SVG.pas',
+  HDTerminalPlugin.Resources.SVG.Consts in 'src\resources\HDTerminalPlugin.Resources.SVG.Consts.pas',
+  HDTerminalPlugin.View.Config in 'src\view\HDTerminalPlugin.View.Config.pas' {ViewSettings},
+  HDTerminalPlugin.Commons in 'src\commons\HDTerminalPlugin.Commons.pas',
+  HDTerminalPlugin.Consts in 'src\commons\HDTerminalPlugin.Consts.pas',
+  HDTerminalPlugin.Creator in 'src\HDTerminalPlugin.Creator.pas',
+  HDTerminalPlugin.Creator.MenuIDE in 'src\HDTerminalPlugin.Creator.MenuIDE.pas',
+  HDTerminalPlugin.Singleton.Process in 'src\commons\HDTerminalPlugin.Singleton.Process.pas',
+  HDTerminalPlugin.Singleton.DockForm in 'src\commons\HDTerminalPlugin.Singleton.DockForm.pas';
+
+end.

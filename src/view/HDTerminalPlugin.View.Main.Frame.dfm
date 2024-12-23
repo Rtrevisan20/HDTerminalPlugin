@@ -1,0 +1,115 @@
+object MainFrame: TMainFrame
+  Left = 0
+  Top = 0
+  Width = 640
+  Height = 480
+  Cursor = crHandPoint
+  Align = alClient
+  DoubleBuffered = True
+  ParentDoubleBuffered = False
+  TabOrder = 0
+  OnResize = FrameResize
+  object pnlButtons: TPanel
+    Left = 0
+    Top = 0
+    Width = 640
+    Height = 27
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 0
+    Margins.Bottom = 0
+    Align = alTop
+    BevelEdges = []
+    BevelOuter = bvNone
+    ParentColor = True
+    TabOrder = 0
+  end
+  object pnTerminal: TPanel
+    Left = 0
+    Top = 27
+    Width = 640
+    Height = 453
+    Align = alClient
+    BevelEdges = []
+    BevelOuter = bvNone
+    ParentColor = True
+    TabOrder = 1
+    object pnlConsole: TPanel
+      Left = 0
+      Top = 0
+      Width = 640
+      Height = 453
+      Align = alClient
+      BevelEdges = []
+      BevelOuter = bvNone
+      ParentColor = True
+      TabOrder = 0
+      object Splitter: TSplitter
+        Left = 506
+        Top = 0
+        Width = 4
+        Height = 453
+        Align = alRight
+        MinSize = 15
+        OnMoved = SplitterMoved
+        ExplicitLeft = 505
+      end
+      object PageControl: TPageControl
+        Left = 0
+        Top = 0
+        Width = 506
+        Height = 453
+        Align = alClient
+        HotTrack = True
+        OwnerDraw = True
+        TabOrder = 0
+      end
+      object pnMenuLateral: TPanel
+        Left = 510
+        Top = 0
+        Width = 130
+        Height = 453
+        Align = alRight
+        BevelEdges = []
+        BevelOuter = bvNone
+        ParentColor = True
+        TabOrder = 1
+        object ScrollBox: TScrollBox
+          Left = 0
+          Top = 0
+          Width = 130
+          Height = 453
+          VertScrollBar.ButtonSize = 1
+          VertScrollBar.Increment = 35
+          VertScrollBar.Size = 1
+          VertScrollBar.Style = ssHotTrack
+          VertScrollBar.Tracking = True
+          Align = alClient
+          BevelOuter = bvNone
+          BorderStyle = bsNone
+          ParentBackground = True
+          TabOrder = 0
+          UseWheelForScrolling = True
+          StyleElements = [seFont, seBorder]
+          object ControlList: TControlList
+            Left = 0
+            Top = 0
+            Width = 130
+            Height = 35
+            Margins.Right = 20
+            Align = alTop
+            BorderStyle = bsNone
+            ItemHeight = 30
+            ItemMargins.Left = 0
+            ItemMargins.Top = 0
+            ItemMargins.Right = 0
+            ItemMargins.Bottom = 0
+            ParentColor = False
+            TabOrder = 0
+            SmoothMouseWheelScrolling = True
+          end
+        end
+      end
+    end
+  end
+end
