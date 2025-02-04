@@ -34,7 +34,8 @@ package HDTerminalPlugin;
 requires
   rtl,
   vcl,
-  designide;
+  designide,
+  fmx;
 
 contains
   HDTerminalPlugin.View.Main.Frame in 'src\view\HDTerminalPlugin.View.Main.Frame.pas' {MainFrame: TFrame},

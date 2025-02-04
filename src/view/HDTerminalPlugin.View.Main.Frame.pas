@@ -27,8 +27,8 @@ type
     pnMenuLateral : TPanel;
     ScrollBox     : TScrollBox;
     ControlList   : TControlList;
-    Splitter: TSplitter;
-    pnlConsole: TPanel;
+    Splitter      : TSplitter;
+    pnlConsole    : TPanel;
     procedure FrameResize(Sender: TObject);
     procedure SplitterMoved(Sender: TObject);
   private
@@ -143,7 +143,9 @@ end;
 
 procedure TMainFrame.FrameResize(Sender: TObject);
 begin
+  Cs.Enter;
   TSingletonProcess.Instance.DoResize(Sender);
+  Cs.Leave;
 end;
 
 procedure TMainFrame.MouseEnterMenu(Sender: TObject);
@@ -166,27 +168,35 @@ end;
 
 procedure TMainFrame.NewConsoleClick(Sender: TObject);
 var
-  VModuleServices: IOTAModuleServices;
-  VDiretorio     : string;
+  VModuleServices : IOTAModuleServices;
+  VDiretorio      : string;
+  VProject        : IOTAProject;
 begin
+  Cs.Enter;
+  {Capturo o caminho do projeto atual...}
   VModuleServices := (BorlandIDEServices as IOTAModuleServices);
   if Assigned(VModuleServices.CurrentModule) then
-   VDiretorio := ExtractFileDir(VModuleServices.CurrentModule.FileName) else
-   VDiretorio := TSingletonSettings.Instance.PathDefault;
+   begin
+    VProject           := VModuleServices.GetActiveProject;
+    VDiretorio         := ExtractFileDir(VProject.FileName);
+   end else VDiretorio := TSingletonSettings.Instance.PathDefault;
 
   TSingletonProcess.Instance.Visible      := False;
   TSingletonProcess.Instance.Priority     := cpDefault;
   TSingletonProcess.Instance.CmmdLine     := TSingletonSettings.Instance.ConsolePath;
-  TSingletonProcess.Instance.CurrentDir   := VDiretorio;
+  TSingletonProcess.Instance.CurrentDir   := Pchar(VDiretorio);
   TSingletonProcess.Instance.PageControl  := PageControl;
   TSingletonProcess.Instance.ControlList  := ControlList;
   TSingletonProcess.Instance.NewProcess;
+  Cs.Leave;
+
 end;
 
 procedure TMainFrame.SplitterMoved(Sender: TObject);
 begin
   TSingletonProcess.Instance.DoResize(Sender);
-  PageControl.Repaint;
+  ScrollBox.Repaint;
+  pnlConsole.Repaint;
 end;
 
 constructor TMainFrame.Create(AOwner: TComponent);

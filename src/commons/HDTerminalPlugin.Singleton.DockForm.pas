@@ -22,44 +22,44 @@ type
   private
     FMainFrame: TMainFrame;
     class procedure RegisterDockableForm  (FormClass: TDockFormSingletonClass;
-                                          var FormVar; Const FormName: String);
+                                           var FormVar; Const FormName: String);
     class procedure UnRegisterDockableForm(var FormVar; Const FormName: String);
     class procedure CreateDockableForm    (var FormVar: TDockFormSingleton;
-                                          FormClass: TDockFormSingletonClass);
+                                           FormClass: TDockFormSingletonClass);
     class procedure FreeDockableForm      (var FormVar: TDockFormSingleton);
     class procedure ShowDockableForm      (Form: TDockFormSingleton);
-
     class var FDockableInstance: TDockFormSingleton;
     class function GetInstance : TDockFormSingleton; static;
   public
-    class property Instance : TDockFormSingleton  read GetInstance;
-    constructor Create(AOwner: TComponent); override;
-    destructor  Destroy; override;
-    procedure   RemoveDockableMainFrame;
-    procedure   ShowDockableMainFrame;
+    class property  Instance : TDockFormSingleton  read GetInstance;
+    constructor     Create(AOwner: TComponent); override;
+    destructor      Destroy; override;
+    procedure       RemoveDockableMainFrame;
+    procedure       ShowDockableMainFrame;
   end;
 
 implementation
+
 uses
   DeskUtil,
-  HDTerminalPlugin.Commons;
+  HDTerminalPlugin.Commons,
+  HDTerminalPlugin.Singleton.Process,
+  Vcl.ComCtrls;
 
 class procedure TDockFormSingleton.RegisterDockableForm(
-  FormClass: TDockFormSingletonClass; var FormVar;
-  Const FormName: String);
+  FormClass: TDockFormSingletonClass; var FormVar; Const FormName: String);
 begin
-  if @RegisterFieldAddress <> nil then
-    RegisterFieldAddress(FormName, @FormVar);
+  if @RegisterFieldAddress <> nil then RegisterFieldAddress(FormName, @FormVar);
   RegisterDesktopFormClass(FormClass, FormName, FormName);
 end;
 
 class procedure TDockFormSingleton.UnRegisterDockableForm(var FormVar; Const FormName: String);
 begin
-  if @UnRegisterFieldAddress <> nil then
-    UnRegisterFieldAddress(@FormVar);
+  if @UnRegisterFieldAddress <> nil then UnRegisterFieldAddress(@FormVar);
 end;
 
-class procedure TDockFormSingleton.CreateDockableForm(var FormVar: TDockFormSingleton;
+class procedure TDockFormSingleton.CreateDockableForm(
+  var FormVar: TDockFormSingleton;
   FormClass: TDockFormSingletonClass);
 begin
   TCustomForm(FormVar) := FormClass.Create(Nil);
@@ -89,15 +89,9 @@ end;
 
 class procedure TDockFormSingleton.ShowDockableForm(Form: TDockFormSingleton);
 begin
-  if not Assigned(Form) then
-    Exit;
-
-  if not Form.Floating then
-  begin
-    Form.ForceShow;
-    FocusWindow(Form);
-  end else
-    Form.Show;
+  if not Assigned(Form) then Exit;
+  DeskUtil.ShowDockableForm(Form);
+  DeskUtil.FocusWindow(Form);
 end;
 
 constructor TDockFormSingleton.Create(AOwner: TComponent);
@@ -114,6 +108,8 @@ begin
   FMainFrame         := TMainFrame.Create(Self);
   FMainFrame.Parent  := Self;
   FMainFrame.Align   := alClient;
+  OnResize           := TSingletonProcess.Instance.DoResize;
+  OnShow             := TSingletonProcess.Instance.SelfShow;
 end;
 
 destructor TDockFormSingleton.Destroy;

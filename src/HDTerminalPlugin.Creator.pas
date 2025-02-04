@@ -24,7 +24,7 @@ type
 {$REGION 'Consts, Variaveis e resourcestring'}
 const
   WizardFail = -1;
-  HdT_VERSION = '-V 0.0.1';
+  HdT_VERSION = '- V 0.0.1';
 var
   FTHDMenuWizard  : THDTerminalPluginMenuWizard;
   FMainMenuIndex  : Integer = WizardFail;
@@ -62,7 +62,9 @@ end;
 
 function Terminated: boolean;
 begin
-  Result := THDPluginCreator.PlugInFinish;
+  if THDPluginCreator <> nil then
+    Result := THDPluginCreator.PlugInFinish else
+    Result := True;
 end;
 
 procedure PluginSplash;
@@ -139,10 +141,8 @@ begin
   LvRootMenu := (BorlandIDEServices as INTAServices).MainMenu;
   LvRootMenu.Items.Delete(FRootMenuIndex);
 
-  if FMainMenuIndex <> WizardFail then
-    (BorlandIDEServices as IOTAWizardServices).RemoveWizard(FMainMenuIndex);
-  if FStylingNotifierIndex <> WizardFail then
-    (BorlandIDEServices as IOTAIDEThemingServices).RemoveNotifier(FStylingNotifierIndex);
+  if FMainMenuIndex        <> WizardFail then (BorlandIDEServices as IOTAWizardServices).RemoveWizard(FMainMenuIndex);
+  if FStylingNotifierIndex <> WizardFail then (BorlandIDEServices as IOTAIDEThemingServices).RemoveNotifier(FStylingNotifierIndex);
 end;
 {$ENDREGION}
 

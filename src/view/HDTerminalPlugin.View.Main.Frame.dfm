@@ -89,7 +89,6 @@ object MainFrame: TMainFrame
           BorderStyle = bsNone
           ParentBackground = True
           TabOrder = 0
-          UseWheelForScrolling = True
           StyleElements = [seFont, seBorder]
           object ControlList: TControlList
             Left = 0
@@ -106,7 +105,6 @@ object MainFrame: TMainFrame
             ItemMargins.Bottom = 0
             ParentColor = False
             TabOrder = 0
-            SmoothMouseWheelScrolling = True
           end
         end
       end

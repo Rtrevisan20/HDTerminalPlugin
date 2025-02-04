@@ -4,6 +4,7 @@ interface
 
 uses
   System.Classes,
+  System.SyncObjs,
   Vcl.Forms;
 
 type
@@ -11,6 +12,9 @@ type
     class procedure RegisterFormClassForTheming(const AFormClass: TCustomFormClass;
                                                 const Component : TComponent); static;
   end;
+
+var
+  Cs: TCriticalSection;
 
 implementation
 
@@ -35,5 +39,11 @@ begin
     end;
   end;
 end;
+
+initialization
+  Cs := TCriticalSection.Create;
+
+finalization
+  Cs.Free;
 
 end.

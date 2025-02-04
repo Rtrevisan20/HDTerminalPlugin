@@ -40,12 +40,13 @@ type
     FCurrentDir     : string;
     FControlList    : TWinControl;
     FPageControl    : TWinControl;
+    FActivePage     : TTabSheet;
     constructor Create;
     procedure   ZeroProcessInfo;
     procedure   RecordWin32Error;
     procedure   ResetError;
 
-   {$REGION 'Events Dos Buttons'}
+   {$REGION 'Events of the Buttons'}
     procedure ImgDeleteEnter    (Sender: TObject);
     procedure ImgDeleteLeave    (Sender: TObject);
     procedure ImgDeleteClick    (Sender: TObject);
@@ -73,12 +74,15 @@ type
     property   ControlList  : TWinControl        read FControlList   write FControlList;
     property   CmmdLine     : string             read FCmmdLine      write FCmmdLine;
     property   CurrentDir   : string             read FCurrentDir    write FCurrentDir;
-    property   Error        : boolean            read FError         write FError    default False;
-    property   Visible      : Boolean            read FVisible       write FVisible  default False;
-    property   Priority     : THDProcessPriority read FPriority      write FPriority default cpDefault;
+    property   ActivePage   : TTabSheet          read FActivePage    write FActivePage  default nil;
+    property   Error        : boolean            read FError         write FError       default False;
+    property   Visible      : Boolean            read FVisible       write FVisible     default False;
+    property   Priority     : THDProcessPriority read FPriority      write FPriority    default cpDefault;
     procedure  NewProcess;
     procedure  TerminateAllProcess;
-    procedure  DoResize(Sender: TObject);
+    procedure  DoResize      (Sender: TObject);
+    procedure  SelfShow        (Sender: TObject);
+    procedure  SetFocusHandle(AHandle : THandle);
   end;
 
 {$REGION 'Constants'}
@@ -93,6 +97,15 @@ const
                            NORMAL_PRIORITY_CLASS,
                            IDLE_PRIORITY_CLASS,
                            REALTIME_PRIORITY_CLASS);
+
+  xCarExt: array[1..51] of string =(
+                        '<','>','!','@','#','$','%','¨','&','*',
+                        '(',')','+','=','{','}','[',']','?',
+                        ';',':',',','|','*','"','~','^','´','`',
+                        '¨','æ','Æ','ø','£','Ø','ƒ','ª','º','¿',
+                        '®','½','¼','ß','µ','þ','ý','Ý','.','/','-',' '
+                        );
+
 {$ENDREGION}
 
 implementation
@@ -100,8 +113,11 @@ implementation
 uses
   HDTerminalLabel,
   HDTerminalSVGImage,
+  FMX.Dialogs,
+  HDTerminalPlugin.Commons,
   HDTerminalPlugin.Consts,
   HDTerminalPlugin.Resources.SVG,
+  HDTerminalPlugin.Resources.SVG.Consts,
   HDTerminalPlugin.View.Config,
   System.SysUtils,
   Vcl.ControlList,
@@ -211,7 +227,7 @@ end;
 destructor TSingletonProcess.Destroy;
 begin
   if Assigned(FPageList) then FPageList.Free;
-  if (Assigned(FListHandle)) and (not FListHandle.IsEmpty) then
+  if (Assigned(FListHandle)) and (FListHandle.Count <> 0 ) then
    begin
     var ListEnum := FListHandle.GetEnumerator;
      while ListEnum.MoveNext do
@@ -229,6 +245,7 @@ function TSingletonProcess.GetContainer(var AName: string; AHandle: THandle): TT
 var
   VPage : TTabSheet;
 begin
+  Cs.Enter;
   if not Assigned(FPageList)    then FPageList    := TObjectDictionary<string, TTabSheet>.Create;
   if not Assigned(FListHandle)  then FListHandle  := TObjectDictionary<string, NativeInt>.Create;
 
@@ -248,11 +265,12 @@ begin
   VPage.Tag               := AHandle;
 
   TPageControl(FPageControl).ActivePage  := VPage;
-
+  ActivePage := VPage;
   FPageList.Add(  AName, VPage);
   FListHandle.Add(AName, AHandle);
 
   Result := VPage;
+  Cs.Leave;
 end;
 
 class function TSingletonProcess.GetInstance: TSingletonProcess;
@@ -294,17 +312,22 @@ var
   VAppState       : DWORD;
   FName           : string;
   FHandle         : integer;
+  FIndexFor       : integer;
 begin
   FTerminate := False;
   ResetError;
   ZeroProcessInfo;
 
   if StartProcess(FCmmdLine, FCurrentDir, VProcessInfo) then
-   begin
+    begin
      try
       Sleep(1500); // Folga de processamento
-      FName   := ExtractFileName(FCurrentDir);
-      FHandle := FindWindow(CClassConsole, nil);
+      //xCarExt
+      FName := ExtractFileName(FCurrentDir);
+      for FIndexFor:= 1 to 51 do
+        FName := StringReplace(FName, xCarExt[FIndexFor], '_', [rfreplaceall]);
+
+      FHandle   := FindWindow(CClassConsole, nil);
       ShowAppEmbedded(FHandle, GetContainer(FName, FHandle));
 
       repeat
@@ -313,14 +336,14 @@ begin
       until (VAppState <> WAIT_TIMEOUT) or FTerminate;
 
      finally
-      if (Assigned(FListHandle)) and (not FListHandle.IsEmpty) then
+      if (Assigned(FListHandle)) and (FListHandle.Count <> 0) then
        if FListHandle.ContainsKey(FName) then
         begin
          KillProcess(FListHandle.Items[FName]);
          FListHandle.Remove(FName);
         end;
 
-      if (Assigned(FPageList)) and (not FPageList.IsEmpty) then
+      if (Assigned(FPageList)) and (FListHandle.Count <> 0) then
        if (FPageList.ContainsKey(FName)) then
         begin
           FPageList.Items[FName].Free;
@@ -330,26 +353,30 @@ begin
       CloseHandle(VProcessInfo.hProcess);
       CloseHandle(VProcessInfo.hThread);
      end;
-   end
+    end
   else
-   begin
-    RecordWin32Error;
-    ZeroProcessInfo;
-   end;
+    begin
+     RecordWin32Error;
+     ZeroProcessInfo;
+    end;
 end;
 
 procedure TSingletonProcess.NextPage;
 begin
-  for var I := 0 to Pred(TPageControl(FPageControl).PageCount) do
+  if TPageControl(FPageControl).PageCount <> 0 then
    begin
-    TPageControl(FPageControl).ActivePageIndex := I;
-    Exit;
-   end;
+    for var FIndexFor := 0 to Pred(TPageControl(FPageControl).PageCount) do
+     begin
+      TPageControl(FPageControl).ActivePageIndex := FIndexFor;
+      ActivePage := TPageControl(FPageControl).ActivePage;
+      Exit;
+     end;
+   end else ActivePage := nil;
 end;
 
 procedure TSingletonProcess.DoResize(Sender: TObject);
 begin
-  if (Assigned(FListHandle)) and (not FListHandle.IsEmpty) then
+  if (Assigned(FListHandle)) and (FListHandle.Count <> 0) then
    begin
     var ListEnum := FListHandle.GetEnumerator;
     while ListEnum.MoveNext do
@@ -362,7 +389,17 @@ begin
       SetForegroundWindow(ListEnum.Current.Value);
      end;
     ListEnum.Free;
+    Application.ProcessMessages;
    end;
+end;
+
+procedure TSingletonProcess.SelfShow(Sender: TObject);
+begin
+ if ActivePage <> nil then
+  begin
+   TSingletonProcess.Instance.SetFocusHandle(ActivePage.Tag);
+   ShowMessage('TDockFormSingleton.DoShow ' + ActivePage.Name);
+  end;
 end;
 
 procedure TSingletonProcess.RecalculateHeightControlList;
@@ -392,6 +429,12 @@ begin
   FError        := False;
   FErrorCode    := 0;
   FErrorMessage := '';
+end;
+
+procedure TSingletonProcess.SetFocusHandle(AHandle: THandle);
+begin
+  Winapi.Windows.SetFocus(AHandle);
+//  SetForegroundWindow(AHandle);
 end;
 
 procedure TSingletonProcess.ShowAppEmbedded(FWindowHandle: THandle; FContainer: TWinControl);
@@ -447,9 +490,9 @@ begin
   UniqueString(SafeCmdLine);
   // Set up startup information structure
   FillChar(StartInfo, Sizeof(StartInfo), #0);
-  StartInfo.cb          := SizeOf(StartInfo);
-  StartInfo.dwFlags     := STARTF_USESHOWWINDOW or STARTF_USEFILLATTRIBUTE;
-  StartInfo.wShowWindow := cShowFlags[FVisible];
+  StartInfo.cb              := SizeOf(StartInfo);
+  StartInfo.dwFlags         := STARTF_USESHOWWINDOW or STARTF_USEFILLATTRIBUTE;
+  StartInfo.wShowWindow     := cShowFlags[FVisible];
   StartInfo.dwFillAttribute := DWORD(014);
   // Set up process info structure
   ZeroProcessInfo;
@@ -482,7 +525,7 @@ begin
   FillChar(FProcessInfo, SizeOf(FProcessInfo), 0);
 end;
 
-{$REGION 'Events Dos Buttons'}
+{$REGION 'Events of the Buttons'}
 procedure TSingletonProcess.ImgDeleteClick(Sender: TObject);
 begin
   var FImage      := (Sender as TSVGImageCustom);
@@ -501,6 +544,7 @@ begin
   VPage.Free;
   RecalculateHeightControlList;
   NextPage;
+  ActivePage := nil;
 end;
 
 procedure TSingletonProcess.ImgDeleteEnter(Sender: TObject);
