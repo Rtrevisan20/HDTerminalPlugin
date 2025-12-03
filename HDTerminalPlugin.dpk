@@ -62,6 +62,8 @@ contains
   HDTerminalPlugin.Creator in 'src\HDTerminalPlugin.Creator.pas',
   HDTerminalPlugin.Creator.MenuIDE in 'src\HDTerminalPlugin.Creator.MenuIDE.pas',
   HDTerminalPlugin.Singleton.Process in 'src\commons\HDTerminalPlugin.Singleton.Process.pas',
-  HDTerminalPlugin.Singleton.DockForm in 'src\commons\HDTerminalPlugin.Singleton.DockForm.pas';
+  HDTerminalPlugin.Singleton.DockForm in 'src\commons\HDTerminalPlugin.Singleton.DockForm.pas',
+  HDTerminalPanel in 'src\components\HDTerminalPanel.pas',
+  HDTerminalTabSheetCustom in 'src\components\HDTerminalTabSheetCustom.pas';
 
 end.

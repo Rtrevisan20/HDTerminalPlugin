@@ -1,22 +1,41 @@
-{******************************************************************}
-{ SVG Image in TPicture                                            }
-{                                                                  }
-{ home page: http://www.mwcs.de                                    }
-{ email    : martin.walter@mwcs.de                                 }
-{                                                                  }
-{ date     : 05-04-2008                                            }
-{ Modify   : 20-11-2024 by Renato Trevisan                         }
-{ Use of this file is permitted for commercial and non-commercial  }
-{ use, as long as the author is credited.                          }
-{ This file (c) 2005, 2008 Martin Walter                           }
-{                                                                  }
-{ Thanks to:                                                       }
-{ Elias Zurschmiede (imagelist error)                              }
-{                                                                  }
-{ This Software is distributed on an "AS IS" basis, WITHOUT        }
-{ WARRANTY OF ANY KIND, either express or implied.                 }
-{                                                                  }
-{ *****************************************************************}
+(*
+***********************************************************************
+  HDTerminalPlugin v0.0.1
+***********************
+  Por Renato Trevisan
+***********************
+  Proposta: Como a IDE do delphi ainda não tem um terminal integrado,
+  fiz uma implementação simples de um terminal integrado, usando alguns
+  recursos externos e internos da IDE.
+***********************************************************************
+Créditos:
+  SVG Image in TPicture
+  home page: http://www.mwcs.de
+  email    : martin.walter@mwcs.de
+***********************************
+
+MIT License
+
+Copyright (c) 2024 Renato Trevisan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*)
 unit HDTerminalSVGImage;
 
 interface

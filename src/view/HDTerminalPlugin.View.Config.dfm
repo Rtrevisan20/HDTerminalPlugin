@@ -22,6 +22,8 @@ object ViewSettings: TViewSettings
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 432
+    ExplicitHeight = 168
     DesignSize = (
       436
       169)
@@ -33,6 +35,8 @@ object ViewSettings: TViewSettings
       Align = alClient
       Caption = 'Console App'
       TabOrder = 0
+      ExplicitWidth = 432
+      ExplicitHeight = 168
       object Label1: TLabel
         Left = 16
         Top = 27
@@ -106,6 +110,8 @@ object ViewSettings: TViewSettings
       Caption = 'Save'
       TabOrder = 1
       OnClick = Btn_SaveClick
+      ExplicitLeft = 300
+      ExplicitTop = 142
     end
     object Btn_Close: TButton
       Left = 369
@@ -116,6 +122,8 @@ object ViewSettings: TViewSettings
       Caption = 'Close'
       TabOrder = 2
       OnClick = Btn_CloseClick
+      ExplicitLeft = 365
+      ExplicitTop = 142
     end
   end
   object OpenDialog: TOpenDialog

@@ -11,9 +11,9 @@ object MainFrame: TMainFrame
   OnResize = FrameResize
   object pnlButtons: TPanel
     Left = 0
-    Top = 0
+    Top = 6
     Width = 640
-    Height = 27
+    Height = 30
     Margins.Left = 0
     Margins.Top = 0
     Margins.Right = 0
@@ -26,88 +26,49 @@ object MainFrame: TMainFrame
   end
   object pnTerminal: TPanel
     Left = 0
-    Top = 27
+    Top = 36
     Width = 640
-    Height = 453
+    Height = 444
     Align = alClient
     BevelEdges = []
     BevelOuter = bvNone
+    ParentBackground = False
     ParentColor = True
     TabOrder = 1
     object pnlConsole: TPanel
       Left = 0
       Top = 0
       Width = 640
-      Height = 453
+      Height = 444
       Align = alClient
       BevelEdges = []
       BevelOuter = bvNone
       ParentColor = True
       TabOrder = 0
-      object Splitter: TSplitter
-        Left = 506
-        Top = 0
-        Width = 4
-        Height = 453
-        Align = alRight
-        MinSize = 15
-        OnMoved = SplitterMoved
-        ExplicitLeft = 505
-      end
       object PageControl: TPageControl
         Left = 0
         Top = 0
-        Width = 506
-        Height = 453
+        Width = 640
+        Height = 444
         Align = alClient
-        HotTrack = True
-        OwnerDraw = True
+        TabHeight = 22
         TabOrder = 0
       end
-      object pnMenuLateral: TPanel
-        Left = 510
-        Top = 0
-        Width = 130
-        Height = 453
-        Align = alRight
-        BevelEdges = []
-        BevelOuter = bvNone
-        ParentColor = True
-        TabOrder = 1
-        object ScrollBox: TScrollBox
-          Left = 0
-          Top = 0
-          Width = 130
-          Height = 453
-          VertScrollBar.ButtonSize = 1
-          VertScrollBar.Increment = 35
-          VertScrollBar.Size = 1
-          VertScrollBar.Style = ssHotTrack
-          VertScrollBar.Tracking = True
-          Align = alClient
-          BevelOuter = bvNone
-          BorderStyle = bsNone
-          ParentBackground = True
-          TabOrder = 0
-          StyleElements = [seFont, seBorder]
-          object ControlList: TControlList
-            Left = 0
-            Top = 0
-            Width = 130
-            Height = 35
-            Margins.Right = 20
-            Align = alTop
-            BorderStyle = bsNone
-            ItemHeight = 30
-            ItemMargins.Left = 0
-            ItemMargins.Top = 0
-            ItemMargins.Right = 0
-            ItemMargins.Bottom = 0
-            ParentColor = False
-            TabOrder = 0
-          end
-        end
-      end
     end
+  end
+  object pnLineSup: TPanel
+    Left = 0
+    Top = 0
+    Width = 640
+    Height = 6
+    Margins.Left = 0
+    Margins.Top = 0
+    Margins.Right = 0
+    Margins.Bottom = 0
+    Align = alTop
+    BevelEdges = []
+    BevelOuter = bvNone
+    ParentColor = True
+    TabOrder = 2
   end
 end
