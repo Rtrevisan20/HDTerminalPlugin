@@ -53,13 +53,12 @@ type
   TDockFormSingleton = class(TDockableForm)
   private
     FMainFrame: TMainFrame;
+    class var FDockableInstance: TDockFormSingleton;
     class procedure RegisterDockableForm(FormClass: TDockFormSingletonClass; var FormVar; Const FormName: String);
     class procedure UnRegisterDockableForm(var FormVar; Const FormName: String);
     class procedure CreateDockableForm(var FormVar: TDockFormSingleton; FormClass: TDockFormSingletonClass);
     class procedure FreeDockableForm(var FormVar: TDockFormSingleton);
     class procedure ShowDockableForm(Form: TDockFormSingleton);
-    class var
-      FDockableInstance: TDockFormSingleton;
     class function GetInstance: TDockFormSingleton; static;
   public
     class property Instance: TDockFormSingleton read GetInstance;
@@ -80,8 +79,7 @@ uses
 class procedure TDockFormSingleton.RegisterDockableForm(
     FormClass: TDockFormSingletonClass;
     var FormVar;
-    Const FormName: String
-);
+    Const FormName: String);
 begin
   if @RegisterFieldAddress <> nil then
     RegisterFieldAddress(FormName, @FormVar);
@@ -124,8 +122,7 @@ end;
 
 class procedure TDockFormSingleton.ShowDockableForm(Form: TDockFormSingleton);
 begin
-  if not Assigned(Form) then
-    Exit;
+  if not Assigned(Form) then Exit;
   DeskUtil.ShowDockableForm(Form);
   DeskUtil.FocusWindow(Form);
 end;
@@ -137,10 +134,10 @@ begin
   Name                := 'HDTerminal';
   AutoSave            := True;
   SaveStateNecessary  := True;
-  ClientHeight        := 600;
-  ClientWidth         := 900;
+  ClientHeight        := 500;
+  ClientWidth         := 800;
   Caption             := 'Terminal';
-  Position            := poScreenCenter;
+  Position            := poMainFormCenter;
   FMainFrame          := TMainFrame.Create(Self);
   FMainFrame.Parent   := Self;
   FMainFrame.Align    := alClient;
@@ -162,7 +159,9 @@ end;
 
 procedure TDockFormSingleton.ShowDockableMainFrame;
 begin
-  ShowDockableForm(GetInstance);
+  if Self.Showing then
+   Self.Close else
+   ShowDockableForm(GetInstance);
 end;
 
 end.

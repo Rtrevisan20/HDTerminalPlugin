@@ -56,7 +56,7 @@ type
 {$REGION 'Consts, Variaveis e resourcestring'}
 const
   WizardFail = -1;
-  HDT_VERSION = '- V 0.0.1';
+  HDT_VERSION = '- v 0.0.1';
 var
   FTHDMenuWizard: THDTerminalPluginMenuWizard;
   FMainMenuIndex: Integer         = WizardFail;
@@ -66,9 +66,9 @@ var
 
   resourcestring
   resPackageName      = 'HDTerminal ' + HDT_VERSION;
-  resLicense          = 'Open Source - Free Version';
+  resLicense          = 'Open Source';
   resAboutTitle       = 'Terminal Integrate';
-  resAboutDescription = 'https://github.com/Rtrevisan20';
+  resAboutDescription = 'https://github.com/Rtrevisan20/HDTerminalPlugin';
 
 {$ENDREGION}
 

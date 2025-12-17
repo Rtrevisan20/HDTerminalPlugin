@@ -309,7 +309,7 @@ begin
 
   if StartProcess(FCmmdLine, FCurrentDir, VProcessInfo) then begin
     try
-      Sleep(1200); // Folga de processamento
+      Sleep(1000); // Folga de processamento 1 segundo
       FName := ExtractFileName(FCurrentDir);
       for FIndexFor := 1 to 51 do
         FName := StringReplace(FName, xCarExt[FIndexFor], '_', [rfreplaceall]);
