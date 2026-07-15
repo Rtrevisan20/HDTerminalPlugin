@@ -1,11 +1,11 @@
-(*
+Ôªø(*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -38,6 +38,7 @@ uses
   DockForm,
   Messages,
   SysUtils,
+  ToolsAPI,
   Variants,
   Windows,
   HDTerminalPlugin.View.Main.Frame,
@@ -60,6 +61,9 @@ type
     class procedure FreeDockableForm(var FormVar: TDockFormSingleton);
     class procedure ShowDockableForm(Form: TDockFormSingleton);
     class function GetInstance: TDockFormSingleton; static;
+  protected
+    procedure DestroyWnd; override;
+    procedure CreateWnd; override;
   public
     class property Instance: TDockFormSingleton read GetInstance;
     constructor Create(AOwner: TComponent); override;
@@ -129,12 +133,12 @@ end;
 
 constructor TDockFormSingleton.Create(AOwner: TComponent);
 begin
-  inherited;
+  inherited Create(AOwner);
   DeskSection         := 'HDTerminal';
   Name                := 'HDTerminal';
   AutoSave            := True;
   SaveStateNecessary  := True;
-  ClientHeight        := 500;
+  ClientHeight        := 600;
   ClientWidth         := 800;
   Caption             := 'Terminal';
   Position            := poMainFormCenter;
@@ -150,6 +154,18 @@ begin
   FMainFrame.Free;
   SaveStateNecessary := True;
   inherited;
+end;
+
+procedure TDockFormSingleton.DestroyWnd;
+begin
+  TSingletonProcess.Instance.DetachTerminals;
+  inherited;
+end;
+
+procedure TDockFormSingleton.CreateWnd;
+begin
+  inherited;
+  TSingletonProcess.Instance.ReEmbedTerminals;
 end;
 
 procedure TDockFormSingleton.RemoveDockableMainFrame;

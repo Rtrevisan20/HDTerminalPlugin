@@ -1,11 +1,11 @@
-(*
+Ôªø(*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -55,12 +55,15 @@ type
   TPageList     = TObjectDictionary<string, TCustomTabSheet>;
   TListHandle   = TObjectDictionary<string, NativeInt>;
   TListButtons  = TObjectDictionary<string, TObject>;
+  TListProcId   = TObjectDictionary<string, DWORD>;
 
   TSingletonProcess = class
   private
     FPageList       : TPageList;    // Lista de paginas do controlist
     FListHandle     : TListHandle;  // Lista dos Handles de terminais
     FListButtons    : TListButtons; // Lista de buttons criados
+    FListProcId     : TListProcId;  // Lista de Process IDs dos terminais
+    FReEmbedding    : Boolean;
     FIndexComponent : integer;
     FTerminate      : Boolean;
     FProcessInfo    : TProcessInformation;
@@ -82,7 +85,7 @@ type
     procedure CloseBtnClick (Sender: TObject);
     procedure KillProcess   (hWindowHandle: HWND);
     procedure ShowAppEmbedded(FWindowHandle: THandle; FContainer: TWinControl);
-    function  GetContainer(var AName: string; AHandle: THandle): TTabSheet;
+    function  GetContainer(var AName: string; AHandle: THandle; AProcessId: DWORD = 0): TTabSheet;
     function  StartProcess(const ACmdLine, ACurrentDir: string; out AProcessInfo: TProcessInformation): Boolean;
     { Class Methods }
     class var FInstance       : TSingletonProcess;
@@ -103,10 +106,11 @@ type
     procedure  DoResize(Sender: TObject);
     procedure  SelfShow(Sender: TObject);
     procedure  SetFocusHandle(AHandle: THandle);
+    procedure ReEmbedTerminals;
+    procedure DetachTerminals;
   end;
 
 {$REGION 'Constants'}
-
 const
   // Maps Visible property to required windows flags
   cShowFlags: array[Boolean] of integer = (SW_HIDE, SW_SHOWMINIMIZED);
@@ -123,7 +127,7 @@ const
       '#',
       '$',
       '%',
-      '®',
+      '¬®',
       '&',
       '*',
       '(',
@@ -143,26 +147,26 @@ const
       '"',
       '~',
       '^',
-      '¥',
+      '¬¥',
       '`',
-      '®',
-      'Ê',
-      '∆',
-      '¯',
-      '£',
-      'ÿ',
-      'É',
-      '™',
-      '∫',
-      'ø',
-      'Æ',
-      'Ω',
-      'º',
-      'ﬂ',
-      'µ',
-      '˛',
-      '˝',
-      '›',
+      '¬®',
+      '√¶',
+      '√Ü',
+      '√∏',
+      '¬£',
+      '√ò',
+      '∆í',
+      '¬™',
+      '¬∫',
+      '¬ø',
+      '¬Æ',
+      '¬Ω',
+      '¬º',
+      '√ü',
+      '¬µ',
+      '√æ',
+      '√Ω',
+      '√ù',
       '.',
       '/',
       '-',
@@ -174,7 +178,6 @@ const
 implementation
 
 uses
-  HDTerminalLabel,
   HDTerminalSVGImage,
   FMX.Dialogs,
   HDTerminalPlugin.Commons,
@@ -186,10 +189,38 @@ uses
   Vcl.Buttons,
   Vcl.ControlList,
   Vcl.Dialogs,
-  Vcl.ExtCtrls,
+
   Vcl.Forms,
   Vcl.StdCtrls,
   Winapi.Messages;
+
+type
+  PEnumFindData = ^TEnumFindData;
+  TEnumFindData = record
+    CmdPid: DWORD;
+    FoundHandle: HWND;
+  end;
+
+function EnumFindConhost(AHandle: HWND; AParam: LPARAM): BOOL; stdcall;
+var
+  Data: PEnumFindData;
+  WindowPid: DWORD;
+  ClassName: array[0..255] of Char;
+begin
+  Data := PEnumFindData(AParam);
+  GetClassName(AHandle, ClassName, 256);
+  if ClassName = 'ConsoleWindowClass' then
+  begin
+    GetWindowThreadProcessId(AHandle, @WindowPid);
+    if WindowPid = Data.CmdPid then
+    begin
+      Data.FoundHandle := AHandle;
+      Result := False;
+      Exit;
+    end;
+  end;
+  Result := True;
+end;
 
 procedure TSingletonProcess.CloseBtnClick(Sender: TObject);
 var
@@ -201,6 +232,8 @@ begin
 
   KillProcess(FListHandle.Items[VCloseBtn.Tab.Name]);
   FListHandle.Remove(VCloseBtn.Tab.Name);
+  if Assigned(FListProcId) then
+    FListProcId.Remove(VCloseBtn.Tab.Name);
   FPageList.Remove(VCloseBtn.Tab.Name);
 end;
 
@@ -215,55 +248,63 @@ end;
 
 destructor TSingletonProcess.Destroy;
 begin
+  if Assigned(FListProcId) then
+    FreeAndNil(FListProcId);
   if Assigned(FPageList) then
-    FPageList.Free;
-  if (Assigned(FListHandle)) and (FListHandle.Count <> 0) then begin
-    var ListEnum := FListHandle.GetEnumerator;
-    while ListEnum.MoveNext do
-      KillProcess(ListEnum.Current.Value);
-
-    ListEnum.Free;
-    FListHandle.Free;
-  end else
-    FListHandle.Free;
+    FreeAndNil(FPageList);
+  if Assigned(FListHandle) then begin
+    if FListHandle.Count <> 0 then begin
+      var ListEnum := FListHandle.GetEnumerator;
+      while ListEnum.MoveNext do
+        KillProcess(ListEnum.Current.Value);
+      ListEnum.Free;
+    end;
+    FreeAndNil(FListHandle);
+  end;
 
   if Assigned(FListButtons) then
-    FListButtons.Free;
+    FreeAndNil(FListButtons);
+
+  FInstance := nil;
   inherited;
 end;
 
-function TSingletonProcess.GetContainer(var AName: string; AHandle: THandle): TTabSheet;
+function TSingletonProcess.GetContainer(var AName: string; AHandle: THandle; AProcessId: DWORD): TTabSheet;
 var
   VPage   : TCustomTabSheet;
 begin
   Cs.Enter;
-  if not Assigned(FPageList)   then FPageList   := TObjectDictionary<string, TCustomTabSheet>.Create;
-  if not Assigned(FListHandle) then FListHandle := TObjectDictionary<string, NativeInt>.Create;
+  try
+    if not Assigned(FPageList)   then FPageList   := TObjectDictionary<string, TCustomTabSheet>.Create;
+    if not Assigned(FListHandle) then FListHandle := TObjectDictionary<string, NativeInt>.Create;
+    if not Assigned(FListProcId) then FListProcId := TObjectDictionary<string, DWORD>.Create;
 
-  if FPageList.ContainsKey(AName) then begin
-    Inc(FIndexComponent, 1);
-    AName := AName + '_' + FIndexComponent.ToString;
+    if FPageList.ContainsKey(AName) then begin
+      Inc(FIndexComponent, 1);
+      AName := AName + '_' + FIndexComponent.ToString;
+    end;
+
+    VPage                   := TCustomTabSheet.Create(TPageControl(FPageControl));
+    VPage.PageControl       := TPageControl(FPageControl);
+    VPage.Align             := alClient;
+    VPage.TabVisible        := True;
+    VPage.Name              := AName;
+    VPage.Caption           := FIndexComponent.ToString +' - ' +TSingletonSettings.Instance.Caption;
+    VPage.AlignWithMargins  := False;
+    VPage.Tag               := AHandle;
+
+    TPageControl(FPageControl).ActivePage  := VPage;
+    VPage.AfterCaption;
+    VPage.OnClickClose := CloseBtnClick;
+    FPageList.Add(  AName, VPage);
+    FListHandle.Add(AName, AHandle);
+    if AProcessId <> 0 then
+      FListProcId.Add(AName, AProcessId);
+
+    Result := VPage;
+  finally
+    Cs.Leave;
   end;
-
-  VPage                   := TCustomTabSheet.Create(TPageControl(FPageControl));
-  VPage.PageControl       := TPageControl(FPageControl);
-  VPage.Align             := alClient;
-  VPage.TabVisible        := True;
-  VPage.Name              := AName;
-  VPage.Caption           := FIndexComponent.ToString +' - ' +TSingletonSettings.Instance.Caption;
-  VPage.AlignWithMargins  := False;
-  VPage.Tag               := AHandle;
-
-  TPageControl(FPageControl).ActivePage  := VPage;
-  VPage.AfterCaption;
-  VPage.OnClickClose := CloseBtnClick;
-  FPageList.Add(  AName, VPage);
-  FListHandle.Add(AName, AHandle);
-
-  Result := VPage;
-
-
-  Cs.Leave;
 end;
 
 class function TSingletonProcess.GetInstance: TSingletonProcess;
@@ -300,8 +341,12 @@ var
   VProcessInfo: TProcessInformation;
   VAppState   : DWORD;
   FName       : string;
-  FHandle     : integer;
+  FHandle     : THandle;
   FIndexFor   : integer;
+  FTryCount   : integer;
+  FProcId     : DWORD;
+  FCmdPid     : DWORD;
+  VEnumData   : TEnumFindData;
 begin
   FTerminate := False;
   ResetError;
@@ -309,13 +354,41 @@ begin
 
   if StartProcess(FCmmdLine, FCurrentDir, VProcessInfo) then begin
     try
-      Sleep(1000); // Folga de processamento 1 segundo
+      FCmdPid := VProcessInfo.dwProcessId;
+      WaitForInputIdle(VProcessInfo.hProcess, 5000);
+
       FName := ExtractFileName(FCurrentDir);
       for FIndexFor := 1 to 51 do
         FName := StringReplace(FName, xCarExt[FIndexFor], '_', [rfreplaceall]);
 
-      FHandle := FindWindow(CClassConsole, nil);
-      ShowAppEmbedded(FHandle, GetContainer(FName, FHandle));
+      FHandle := 0;
+      FProcId := 0;
+      VEnumData.CmdPid := FCmdPid;
+      for FTryCount := 1 to 10 do
+      begin
+        VEnumData.FoundHandle := 0;
+        EnumWindows(@EnumFindConhost, LPARAM(@VEnumData));
+        if VEnumData.FoundHandle <> 0 then
+        begin
+          FHandle := VEnumData.FoundHandle;
+          GetWindowThreadProcessId(FHandle, @FProcId);
+          Break;
+        end;
+        Sleep(300);
+        Application.ProcessMessages;
+      end;
+
+      if FHandle = 0 then
+      begin
+        FHandle := FindWindow(CClassConsole, nil);
+        if FHandle <> 0 then
+          GetWindowThreadProcessId(FHandle, @FProcId)
+        else
+          FProcId := 0;
+      end;
+
+      if FHandle <> 0 then
+        ShowAppEmbedded(FHandle, GetContainer(FName, FHandle, FProcId));
 
       repeat
         VAppState := WaitForSingleObject(VProcessInfo.hProcess, 50);
@@ -347,6 +420,7 @@ end;
 
 procedure TSingletonProcess.DoResize(Sender: TObject);
 begin
+  ReEmbedTerminals;
   if (Assigned(FListHandle)) and (FListHandle.Count <> 0) then begin
     var ListEnum := FListHandle.GetEnumerator;
     while ListEnum.MoveNext do begin
@@ -360,10 +434,17 @@ begin
     ListEnum.Free;
     Application.ProcessMessages;
   end;
+  // For√ßa redesenho do PageControl
+  if Assigned(FPageControl) and (FPageControl is TPageControl) then
+  begin
+    InvalidateRect(FPageControl.Handle, nil, True);
+    UpdateWindow(FPageControl.Handle);
+  end;
 end;
 
 procedure TSingletonProcess.SelfShow(Sender: TObject);
 begin
+  ReEmbedTerminals;
   if ActivePage <> nil then
     TSingletonProcess.Instance.SetFocusHandle(ActivePage.Tag);
 end;
@@ -392,26 +473,26 @@ var
   WindowStyle: integer;
   FAppThreadID: Cardinal;
 begin
-  { Defina estilos de janela de aplicativo em execuÁ„o. }
+  { Defina estilos de janela de aplicativo em execu√ß√£o. }
   WindowStyle := GetWindowLong(FWindowHandle, GWL_STYLE);
   WindowStyle := WindowStyle - WS_CAPTION - WS_BORDER - WS_OVERLAPPED - WS_THICKFRAME;
   SetWindowLong(FWindowHandle, GWL_STYLE, WindowStyle);
-  { Anexa o thread de entrada do aplicativo contÍiner
-    ao thread de entrada do aplicativo em execuÁ„o, para que
-    o aplicativo em execuÁ„o receba a entrada do usu·rio. }
+  { Anexa o thread de entrada do aplicativo container
+    ao thread de entrada do aplicativo em execu√ß√£o, para que
+    o aplicativo em execuÔøΩÔøΩo receba a entrada do usuÔøΩrio. }
   FAppThreadID := GetWindowThreadProcessID(FWindowHandle, nil);
   AttachThreadInput(GetCurrentThreadId, FAppThreadID, True);
-  { Alterando o pai do aplicativo em execuÁ„o
-    para nosso controle de contÍiner fornecido }
+  { Alterando o pai do aplicativo em execu√ß√£o
+    para nosso controle de container fornecido }
   Winapi.Windows.SetParent(FWindowHandle, FContainer.Handle);
   SendMessage(FContainer.Handle, WM_UPDATEUISTATE, UIS_INITIALIZE, 0);
   UpdateWindow(FWindowHandle);
   { Isso evita que o controle pai
-    redesenhe a ·rea de suas janelas filhas
-    (o aplicativo em execuÁ„o) }
+    redesenhe a √°rea de suas janelas filhas
+    (o aplicativo em execu√ß√£o) }
   SetWindowLong(FContainer.Handle, GWL_STYLE, GetWindowLong(FContainer.Handle, GWL_STYLE) or WS_CLIPCHILDREN);
-  { FaÁa com que o aplicativo em execuÁ„o
-    preencha toda a ·rea do cliente do contÍiner }
+  { FaÔøΩa com que o aplicativo em execu√ß√£o
+    preencha toda a √°rea do cliente do container }
   SetWindowPos(FWindowHandle, 0, 0, 0, FContainer.ClientWidth, FContainer.ClientHeight, SWP_NOZORDER);
   SetForegroundWindow(FWindowHandle);
   ShowWindow(FWindowHandle, SW_SHOW);
@@ -459,13 +540,93 @@ begin
 end;
 
 procedure TSingletonProcess.TerminateAllProcess;
+var
+  ListEnum: TDictionary<string, NativeInt>.TPairEnumerator;
 begin
   FTerminate := True;
+
+  if Assigned(FListHandle) then begin
+    ListEnum := FListHandle.GetEnumerator;
+    try
+      while ListEnum.MoveNext do
+        KillProcess(ListEnum.Current.Value);
+    finally
+      ListEnum.Free;
+    end;
+  end;
 end;
 
 procedure TSingletonProcess.ZeroProcessInfo;
 begin
   FillChar(FProcessInfo, Sizeof(FProcessInfo), 0);
+end;
+
+procedure TSingletonProcess.ReEmbedTerminals;
+var
+  ListEnum: TDictionary<string, DWORD>.TPairEnumerator;
+  ConsoleHandle: HWND;
+  Page: TCustomTabSheet;
+  PageHandle: HWND;
+  ParentHandle: HWND;
+begin
+  if FReEmbedding then Exit;
+  FReEmbedding := True;
+  try
+    if not Assigned(FListProcId) then
+      Exit;
+    ListEnum := FListProcId.GetEnumerator;
+    try
+      while ListEnum.MoveNext do
+      begin
+        ConsoleHandle := THDTerminalCommons.FindConsoleByProcessId(ListEnum.Current.Value);
+        if ConsoleHandle = 0 then Continue;
+
+        if not (Assigned(FPageList) and FPageList.TryGetValue(ListEnum.Current.Key, Page)) then
+          Continue;
+
+        PageHandle := Page.Handle;
+        ParentHandle := Winapi.Windows.GetParent(ConsoleHandle);
+        if ParentHandle = PageHandle then
+          Continue;
+
+        Winapi.Windows.SetParent(ConsoleHandle, PageHandle);
+        SetWindowPos(ConsoleHandle, 0, 0, 0, Page.ClientWidth, Page.ClientHeight, SWP_NOZORDER);
+        ShowWindow(ConsoleHandle, SW_SHOW);
+        UpdateWindow(ConsoleHandle);
+        Page.Tag := ConsoleHandle;
+
+        if Assigned(Page.PageControl) then
+        begin
+          InvalidateRect(Page.PageControl.Handle, nil, True);
+          UpdateWindow(Page.PageControl.Handle);
+        end;
+      end;
+    finally
+      ListEnum.Free;
+    end;
+  finally
+    FReEmbedding := False;
+  end;
+end;
+
+procedure TSingletonProcess.DetachTerminals;
+var
+  ListEnum: TDictionary<string, DWORD>.TPairEnumerator;
+  ConsoleHandle: HWND;
+begin
+  if not Assigned(FListProcId) then
+    Exit;
+  ListEnum := FListProcId.GetEnumerator;
+  try
+    while ListEnum.MoveNext do
+    begin
+      ConsoleHandle := THDTerminalCommons.FindConsoleByProcessId(ListEnum.Current.Value);
+      if (ConsoleHandle <> 0) and IsWindow(ConsoleHandle) then
+        Winapi.Windows.SetParent(ConsoleHandle, 0);
+    end;
+  finally
+    ListEnum.Free;
+  end;
 end;
 
 end.

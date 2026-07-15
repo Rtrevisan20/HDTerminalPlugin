@@ -1,0 +1,62 @@
+00000001	0.00000000	2364	[HDTerminal] DockFormSingleton.CreateWnd - starting re-embed monitor	
+00000002	0.00024590	2364	[HDTerminal] StartReEmbedMonitor: Starting timer	
+00000003	0.00332260	2364	[HDTerminal] DockFormSingleton.DestroyWnd	
+00000004	0.00339930	2364	[HDTerminal] DetachTerminals: FListProcId=nil, exiting	
+00000005	0.00896350	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000006	0.01015060	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000007	0.01116170	2364	[HDTerminal] DockFormSingleton.CreateWnd - starting re-embed monitor	
+00000008	0.01118270	2364	[HDTerminal] StartReEmbedMonitor: Starting timer	
+00000009	0.01134990	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000010	0.31446540	2364	[HDTerminal] StopReEmbedMonitor: Stopping timer	
+00000011	2.28934169	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000012	2.29912376	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000013	2.29914880	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000014	2.30244064	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000015	2.30246496	2364	[HDTerminal] ReEmbedTerminals: FListProcId=nil, exiting	
+00000016	3.82987881	2364	[HDTerminal] NewProcess: Started PID=22672 (cmd.exe)	
+00000017	4.13832951	2364	[HDTerminal] NewProcess: Found console Handle=5443588, PID=22672	
+00000018	7.34964561	2364	[HDTerminal] TabSheet.DestroyWnd: Name=HDTerminalPlugin Tag=5443588 IsWindow=1	
+00000019	7.34967756	2364	[HDTerminal] TabSheet.DestroyWnd: Reparenting console 5443588 to desktop	
+00000020	7.36625528	2364	[HDTerminal] DockFormSingleton.DestroyWnd	
+00000021	7.36629677	2364	[HDTerminal] DetachTerminals: Count=1	
+00000022	7.36678648	2364	[HDTerminal] DetachTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=5443588 IsWindow=1	
+00000023	7.36683607	2364	[HDTerminal] DetachTerminals: Reparenting 5443588 to desktop	
+00000024	7.37489939	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000025	7.37512875	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=5443588	
+00000026	7.40538073	2364	[HDTerminal] ReEmbedTerminals: Console parent=0, Page handle=5245878	
+00000027	7.40542793	2364	[HDTerminal] ReEmbedTerminals: Embedding console 5443588 into Page HDTerminalPlugin (Handle=5245878)	
+00000028	7.42467451	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000029	7.42739582	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000030	7.43516636	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000031	7.43753576	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000032	7.43875933	2364	[HDTerminal] DockFormSingleton.CreateWnd - starting re-embed monitor	
+00000033	7.44393778	2364	[HDTerminal] StartReEmbedMonitor: Starting timer	
+00000034	7.76826715	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000035	7.76858902	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000036	7.76869345	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000037	9.03537655	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000038	9.03570366	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000039	9.03581810	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000040	10.30335331	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000041	10.30338764	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000042	10.30387878	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000043	11.54829216	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000044	11.54834270	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000045	11.54890823	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000046	12.81503010	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000047	12.81508636	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000048	12.81547832	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000049	14.06146908	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000050	14.06154537	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000051	14.06230927	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000052	15.26292133	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000053	15.26295662	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000054	15.26350689	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000055	16.52669716	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000056	16.52675438	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000057	16.52724457	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000058	17.79381561	2364	[HDTerminal] ReEmbedTimerHandler: Timer tick - calling ReEmbedTerminals	
+00000059	17.79388046	2364	[HDTerminal] ReEmbedTerminals: Count=1	
+00000060	17.79454994	2364	[HDTerminal] ReEmbedTerminals: Key=HDTerminalPlugin ProcId=22672 ConsoleHandle=0	
+00000061	18.10849380	2364	[HDTerminal] StopReEmbedMonitor: Stopping timer	
+00000062	30.67771912	22744	Suspending	

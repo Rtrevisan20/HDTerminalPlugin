@@ -1,11 +1,11 @@
-(*
+ï»¿(*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda não tem um terminal integrado,
-  fiz uma implementação simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda nÃ£o tem um terminal integrado,
+  fiz uma implementaÃ§Ã£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -32,6 +32,7 @@ SOFTWARE.
 *)
 
 unit HDTerminalPlugin.Creator.MenuIDE;
+
 interface
 
 uses
@@ -111,7 +112,7 @@ begin
    begin
     FTerminalConfig         := TMenuItem.Create(nil);
     FTerminalConfig.Name    := 'Mnu_ConfigConsole';
-    FTerminalConfig.Caption := 'Configurações';
+    FTerminalConfig.Caption := 'ConfiguraÃ§Ãµes';
     FTerminalConfig.OnClick := ConfiguracaoMenuClick;
    end;
 

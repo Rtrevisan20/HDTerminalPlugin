@@ -1,11 +1,11 @@
-(*
+Ôªø(*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -40,7 +40,7 @@ uses
 
 const
   CClassConsole   = 'ConsoleWindowClass';
-  CMsgErroExe     = 'O execut·vel %s n„o existe.';
+  CMsgErroExe     = 'O execut√°vel %s n√£o existe.';
 
   CPnContainer    = 'pnContainer';
   CLblNameAba     = 'lblNameAba';

@@ -1,11 +1,11 @@
 (*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -38,6 +38,7 @@ uses
   ToolsAPI,
   System.Classes,
   System.Generics.Collections,
+  System.ImageList,
   System.SysUtils,
   System.Variants,
   Vcl.ComCtrls,
@@ -47,9 +48,10 @@ uses
   Vcl.ExtCtrls,
   Vcl.Forms,
   Vcl.Graphics,
+  Vcl.ImgList,
   Vcl.StdCtrls,
   Winapi.Messages,
-  Winapi.Windows, System.ImageList, Vcl.ImgList;
+  Winapi.Windows;
 
 type
   TMainFrame = class(TFrame)
@@ -73,7 +75,6 @@ type
 implementation
 
 uses
-  HDTerminalLabel,
   HDTerminalSVGImage,
   HDTerminalPlugin.Commons,
   HDTerminalPlugin.Consts,
@@ -169,8 +170,11 @@ end;
 procedure TMainFrame.FrameResize(Sender: TObject);
 begin
   Cs.Enter;
-  TSingletonProcess.Instance.DoResize(Sender);
-  Cs.Leave;
+  try
+    TSingletonProcess.Instance.DoResize(Sender);
+  finally
+    Cs.Leave;
+  end;
 end;
 
 procedure TMainFrame.MouseEnterMenu(Sender: TObject);
@@ -196,22 +200,24 @@ var
   VProject: IOTAProject;
 begin
   Cs.Enter;
+  try
+    {Capturo o caminho do projeto atual...}
+    VModuleServices := (BorlandIDEServices as IOTAModuleServices);
+    if Assigned(VModuleServices.CurrentModule) then begin
+      VProject := VModuleServices.GetActiveProject;
+      VDiretorio := ExtractFileDir(VProject.FileName);
+    end else
+      VDiretorio := TSingletonSettings.Instance.PathDefault;
 
-  {Capturo o caminho do projeto atual...}
-  VModuleServices := (BorlandIDEServices as IOTAModuleServices);
-  if Assigned(VModuleServices.CurrentModule) then begin
-    VProject := VModuleServices.GetActiveProject;
-    VDiretorio := ExtractFileDir(VProject.FileName);
-  end else
-    VDiretorio := TSingletonSettings.Instance.PathDefault;
-
-  TSingletonProcess.Instance.Visible      := False;
-  TSingletonProcess.Instance.Priority     := cpDefault;
-  TSingletonProcess.Instance.CmmdLine     := TSingletonSettings.Instance.ConsolePath;
-  TSingletonProcess.Instance.CurrentDir   := Pchar(VDiretorio);
-  TSingletonProcess.Instance.PageControl  := PageControl;
-  TSingletonProcess.Instance.NewProcess;
-  Cs.Leave;
+    TSingletonProcess.Instance.Visible      := False;
+    TSingletonProcess.Instance.Priority     := cpDefault;
+    TSingletonProcess.Instance.CmmdLine     := TSingletonSettings.Instance.ConsolePath;
+    TSingletonProcess.Instance.CurrentDir   := Pchar(VDiretorio);
+    TSingletonProcess.Instance.PageControl  := PageControl;
+    TSingletonProcess.Instance.NewProcess;
+  finally
+    Cs.Leave;
+  end;
 end;
 
 constructor TMainFrame.Create(AOwner: TComponent);

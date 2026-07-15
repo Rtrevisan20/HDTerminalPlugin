@@ -1,14 +1,14 @@
 (*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
-CrÈditos:
+Cr√©ditos:
   SVG Image in TPicture
   home page: http://www.mwcs.de
   email    : martin.walter@mwcs.de

@@ -1,11 +1,11 @@
-(*
+ï»¿(*
 ***********************************************************************
   HDTerminalPlugin v0.0.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda não tem um terminal integrado,
-  fiz uma implementação simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda nï¿½o tem um terminal integrado,
+  fiz uma implementaï¿½ï¿½o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -68,6 +68,7 @@ Type
     procedure DoShow; override;
     procedure DoHide; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    procedure DestroyWnd; override;
   public
     constructor Create(AOwner: TComponent); override;
     procedure AfterCaption;
@@ -79,6 +80,7 @@ implementation
 
 uses
   Vcl.Graphics,
+  Winapi.Windows,
   HDTerminalSVGImage;
 
 {$Region 'TCustumBtnTab'}
@@ -124,6 +126,16 @@ end;
 
 procedure TCustomTabSheet.DoShow;
 begin
+  inherited;
+end;
+
+procedure TCustomTabSheet.DestroyWnd;
+var
+  ConsoleHandle: HWND;
+begin
+  ConsoleHandle := Tag;
+  if (ConsoleHandle <> 0) and IsWindow(ConsoleHandle) then
+    Winapi.Windows.SetParent(ConsoleHandle, 0);
   inherited;
 end;
 

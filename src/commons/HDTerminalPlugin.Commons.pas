@@ -1,11 +1,11 @@
 (*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -37,12 +37,14 @@ interface
 uses
   System.Classes,
   System.SyncObjs,
+  Winapi.Windows,
   Vcl.Forms;
 
 type
   THDTerminalCommons = class
     class procedure RegisterFormClassForTheming(const AFormClass: TCustomFormClass;
                                                 const Component : TComponent); static;
+    class function FindConsoleByProcessId(AProcessId: DWORD): HWND; static;
   end;
 
 var
@@ -53,6 +55,44 @@ implementation
 uses
   ToolsAPI,
   System.SysUtils;
+
+type
+  TEnumData = record
+    TargetProcessId: DWORD;
+    FoundHandle: HWND;
+  end;
+  PEnumData = ^TEnumData;
+
+function EnumWindowsProc(AHandle: HWND; AParam: LPARAM): BOOL; stdcall;
+var
+  Data: PEnumData;
+  WindowProcessId: DWORD;
+  ClassName: array[0..255] of Char;
+begin
+  Data := PEnumData(AParam);
+  GetWindowThreadProcessId(AHandle, @WindowProcessId);
+  if WindowProcessId = Data.TargetProcessId then
+  begin
+    GetClassName(AHandle, ClassName, 256);
+    if ClassName = 'ConsoleWindowClass' then
+    begin
+      Data.FoundHandle := AHandle;
+      Result := False;
+      Exit;
+    end;
+  end;
+  Result := True;
+end;
+
+class function THDTerminalCommons.FindConsoleByProcessId(AProcessId: DWORD): HWND;
+var
+  Data: TEnumData;
+begin
+  Data.TargetProcessId := AProcessId;
+  Data.FoundHandle := 0;
+  EnumWindows(@EnumWindowsProc, LPARAM(@Data));
+  Result := Data.FoundHandle;
+end;
 
 
 class procedure THDTerminalCommons.RegisterFormClassForTheming(

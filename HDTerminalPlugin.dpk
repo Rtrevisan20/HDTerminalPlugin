@@ -25,6 +25,7 @@ package HDTerminalPlugin;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
+{$DEFINE TOOLSAPI}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'HDTerminalPlugin'}
 {$LIBSUFFIX AUTO}
@@ -52,7 +53,6 @@ contains
   GDIPOBJ2 in 'src\resources\SVG-Ekot\gdip\GDIPOBJ2.pas',
   GDIPPathText in 'src\resources\SVG-Ekot\gdip\GDIPPathText.pas',
   GDIPUtils in 'src\resources\SVG-Ekot\gdip\GDIPUtils.pas',
-  HDTerminalLabel in 'src\components\HDTerminalLabel.pas',
   HDTerminalSVGImage in 'src\components\HDTerminalSVGImage.pas',
   HDTerminalPlugin.Resources.SVG in 'src\resources\HDTerminalPlugin.Resources.SVG.pas',
   HDTerminalPlugin.Resources.SVG.Consts in 'src\resources\HDTerminalPlugin.Resources.SVG.Consts.pas',
@@ -63,7 +63,6 @@ contains
   HDTerminalPlugin.Creator.MenuIDE in 'src\HDTerminalPlugin.Creator.MenuIDE.pas',
   HDTerminalPlugin.Singleton.Process in 'src\commons\HDTerminalPlugin.Singleton.Process.pas',
   HDTerminalPlugin.Singleton.DockForm in 'src\commons\HDTerminalPlugin.Singleton.DockForm.pas',
-  HDTerminalPanel in 'src\components\HDTerminalPanel.pas',
   HDTerminalTabSheetCustom in 'src\components\HDTerminalTabSheetCustom.pas';
 
 end.

@@ -1,11 +1,11 @@
-(*
+Ôªø(*
 ***********************************************************************
-  HDTerminalPlugin v0.0.1
+  HDTerminalPlugin v0.1.1
 ***********************
   Por Renato Trevisan
 ***********************
-  Proposta: Como a IDE do delphi ainda n„o tem um terminal integrado,
-  fiz uma implementaÁ„o simples de um terminal integrado, usando alguns
+  Proposta: Como a IDE do delphi ainda n√£o tem um terminal integrado,
+  fiz uma implementa√ß√£o simples de um terminal integrado, usando alguns
   recursos externos e internos da IDE.
 ***********************************************************************
 MIT License
@@ -37,6 +37,7 @@ interface
 uses
   ToolsAPI,
   HDTerminalPlugin.Creator.MenuIDE,
+  Vcl.Forms,
   Winapi.Windows;
 
 type
@@ -56,7 +57,7 @@ type
 {$REGION 'Consts, Variaveis e resourcestring'}
 const
   WizardFail = -1;
-  HDT_VERSION = '- v 0.0.1';
+  HDT_VERSION = '- v 0.1.1';
 var
   FTHDMenuWizard: THDTerminalPluginMenuWizard;
   FMainMenuIndex: Integer         = WizardFail;
@@ -67,7 +68,7 @@ var
   resourcestring
   resPackageName      = 'HDTerminal ' + HDT_VERSION;
   resLicense          = 'Open Source';
-  resAboutTitle       = 'Terminal Integrate';
+  resAboutTitle       = 'Integrated Terminal';
   resAboutDescription = 'https://github.com/Rtrevisan20/HDTerminalPlugin';
 
 {$ENDREGION}
@@ -94,10 +95,7 @@ end;
 
 function Terminated: boolean;
 begin
-  if THDPluginCreator <> nil then
-    Result := THDPluginCreator.PlugInFinish
-  else
-    Result := True;
+  Result := THDPluginCreator.PlugInFinish;
 end;
 
 procedure PluginSplash;
@@ -144,8 +142,13 @@ end;
 {$REGION 'THDPluginCreator'}
 class function THDPluginCreator.PlugInFinish: boolean;
 begin
-  TSingletonProcess.Instance.TerminateAllProcess;
   Result := True;
+  try
+    TSingletonProcess.Instance.TerminateAllProcess;
+    TSingletonProcess.Instance.DetachTerminals;
+  except
+    Result := True;
+  end;
 end;
 
 class procedure THDPluginCreator.PlugInStartup;
@@ -162,16 +165,28 @@ class procedure THDPluginCreator.RemoveWizards;
 var
   LvRootMenu: TMainMenu;
 begin
-  TSingletonProcess.Instance.Free;
-  TDockFormSingleton.Instance.RemoveDockableMainFrame;
+  try
+    TSingletonProcess.Instance.Free;
+  except end;
 
-  LvRootMenu := (BorlandIDEServices as INTAServices).MainMenu;
-  LvRootMenu.Items.Delete(FRootMenuIndex);
+  try
+    TDockFormSingleton.Instance.RemoveDockableMainFrame;
+  except end;
+
+  try
+    LvRootMenu := (BorlandIDEServices as INTAServices).MainMenu;
+    if (FRootMenuIndex <> WizardFail) and (FRootMenuIndex < LvRootMenu.Items.Count) then
+      LvRootMenu.Items.Delete(FRootMenuIndex);
+  except end;
 
   if FMainMenuIndex <> WizardFail then
-    (BorlandIDEServices as IOTAWizardServices).RemoveWizard(FMainMenuIndex);
+    try
+      (BorlandIDEServices as IOTAWizardServices).RemoveWizard(FMainMenuIndex);
+    except end;
   if FStylingNotifierIndex <> WizardFail then
-    (BorlandIDEServices as IOTAIDEThemingServices).RemoveNotifier(FStylingNotifierIndex);
+    try
+      (BorlandIDEServices as IOTAIDEThemingServices).RemoveNotifier(FStylingNotifierIndex);
+    except end;
 end;
 {$ENDREGION}
 

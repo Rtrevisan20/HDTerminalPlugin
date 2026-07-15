@@ -1,0 +1,7 @@
+wrap_column = 110
+begin_style = "always_wrap"
+encoding = "UTF-8"
+use_tabs = false
+tab_width = 2
+continuation_indents = 2
+line_ending = "native"

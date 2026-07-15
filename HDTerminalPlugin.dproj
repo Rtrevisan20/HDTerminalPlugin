@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{9426A016-FC2A-4979-B82C-5A8F922B8CF4}</ProjectGuid>
         <MainSource>HDTerminalPlugin.dpk</MainSource>
-        <ProjectVersion>20.1</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <FrameworkType>VCL</FrameworkType>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
@@ -21,6 +21,11 @@
     </PropertyGroup>
     <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Base)'=='true') or '$(Base_Win64)'!=''">
         <Base_Win64>true</Base_Win64>
+        <CfgParent>Base</CfgParent>
+        <Base>true</Base>
+    </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64x' and '$(Base)'=='true') or '$(Base_Win64x)'!=''">
+        <Base_Win64x>true</Base_Win64x>
         <CfgParent>Base</CfgParent>
         <Base>true</Base>
     </PropertyGroup>
@@ -64,6 +69,7 @@
         <DllSuffix>$(Auto)</DllSuffix>
         <SanitizedProjectName>HDTerminalPlugin</SanitizedProjectName>
         <DesignOnlyPackage>true</DesignOnlyPackage>
+        <DCC_Define>TOOLSAPI;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
@@ -74,6 +80,13 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_UsePackage>vcl;rtl;fmx;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64x)'!=''">
+        <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
+        <BT_BuildType>Debug</BT_BuildType>
+        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
+        <VerInfo_Locale>1033</VerInfo_Locale>
+        <BCC_EnableBatchCompilation>true</BCC_EnableBatchCompilation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
@@ -126,7 +139,6 @@
         <DCCReference Include="src\resources\SVG-Ekot\gdip\GDIPOBJ2.pas"/>
         <DCCReference Include="src\resources\SVG-Ekot\gdip\GDIPPathText.pas"/>
         <DCCReference Include="src\resources\SVG-Ekot\gdip\GDIPUtils.pas"/>
-        <DCCReference Include="src\components\HDTerminalLabel.pas"/>
         <DCCReference Include="src\components\HDTerminalSVGImage.pas"/>
         <DCCReference Include="src\resources\HDTerminalPlugin.Resources.SVG.pas"/>
         <DCCReference Include="src\resources\HDTerminalPlugin.Resources.SVG.Consts.pas"/>
@@ -140,12 +152,12 @@
         <DCCReference Include="src\HDTerminalPlugin.Creator.MenuIDE.pas"/>
         <DCCReference Include="src\commons\HDTerminalPlugin.Singleton.Process.pas"/>
         <DCCReference Include="src\commons\HDTerminalPlugin.Singleton.DockForm.pas"/>
-        <DCCReference Include="src\components\HDTerminalPanel.pas"/>
         <DCCReference Include="src\components\HDTerminalTabSheetCustom.pas"/>
         <RcItem Include="src\assets\SPLASH.bmp">
             <ResourceType>BITMAP</ResourceType>
             <ResourceId>SPLASH</ResourceId>
         </RcItem>
+        <None Include="pasfmt.toml"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
@@ -172,7 +184,8 @@
                 </Source>
             </Delphi.Personality>
             <Deployment Version="4">
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\22.0\Bpl\HDTerminalPlugin280.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\22.0\Bpl\HDTerminalPlugin280.bpl" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\HDTerminalPlugin290.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>HDTerminalPlugin.bpl</RemoteName>
                         <Overwrite>true</Overwrite>
@@ -203,12 +216,6 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\xml</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidGDBServer">
-                    <Platform Name="Android">
-                        <RemoteDir>library\lib\armeabi-v7a</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -301,6 +308,16 @@
                     </Platform>
                     <Platform Name="Android64">
                         <RemoteDir>res\values-v31</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                </DeployClass>
+                <DeployClass Name="AndroidSplashStylesV35">
+                    <Platform Name="Android">
+                        <RemoteDir>res\values-v35</RemoteDir>
+                        <Operation>1</Operation>
+                    </Platform>
+                    <Platform Name="Android64">
+                        <RemoteDir>res\values-v35</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -771,6 +788,9 @@
                     <Platform Name="Win64">
                         <Operation>1</Operation>
                     </Platform>
+                    <Platform Name="Win64x">
+                        <Operation>1</Operation>
+                    </Platform>
                 </DeployClass>
                 <DeployClass Name="ProjectiOSDeviceDebug">
                     <Platform Name="iOSDevice32">
@@ -1036,6 +1056,7 @@
             <Platforms>
                 <Platform value="Win32">True</Platform>
                 <Platform value="Win64">False</Platform>
+                <Platform value="Win64x">False</Platform>
             </Platforms>
         </BorlandProject>
         <ProjectFileVersion>12</ProjectFileVersion>
